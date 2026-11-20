@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { WeatherBadge } from "../editor/SetupPanel";
+import { WeatherBadge } from "../ui";
 import { DRY_CALM } from "../sim/types";
 import { useGameStore } from "../store/gameStore";
 import { RACE_TRACKS } from "../tracks/race";
