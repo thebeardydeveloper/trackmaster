@@ -1,0 +1,21 @@
+/* Design-sync stylesheet: the app's globals.css compiled stand-alone (Tailwind 4).
+   Sources: every class used anywhere in src/ plus the authored previews. */
+@import "tailwindcss";
+@source "../src";
+@source "./previews";
+
+@theme inline {
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: #0b0f14;
+  color: #f4f4f5;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

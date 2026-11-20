@@ -1,0 +1,56 @@
+{
+  "projectId": "c31ee10a-382a-4831-98fd-15ac1ec6d43d",
+  "shape": "package",
+  "pkg": "trackmaster",
+  "globalName": "TrackMaster",
+  "srcDir": "src/ui",
+  "tsconfig": "tsconfig.json",
+  "buildCmd": ".ds-sync/node_modules/.bin/tailwindcss -i .design-sync/tailwind.css -o .design-sync/.cache/tailwind.out.css",
+  "cssEntry": ".design-sync/.cache/tailwind.out.css",
+  "extraFonts": [
+    ".design-sync/fonts/geist.css"
+  ],
+  "entry": "src/ui/index.ts",
+  "componentSrcMap": {
+    "DeltaStat": "src/ui/DeltaStat.tsx",
+    "MiniMap": "src/ui/MiniMap.tsx",
+    "SectorChip": "src/ui/SectorChip.tsx",
+    "Stars": "src/ui/Stars.tsx",
+    "Stat": "src/ui/Stat.tsx",
+    "WeatherBadge": "src/ui/WeatherBadge.tsx",
+    "WindArrow": "src/ui/WindArrow.tsx"
+  },
+  "dtsPropsFor": {
+    "DeltaStat": "\n  label: string;\n  /** Seconds vs. the reference;\n  negative = faster (green), positive = slower (red), null = \"—\". */ d: number | null;\n",
+    "MiniMap": "\n  /** Track outline: centerline points in metres (y up), point count, closed loop or point-to-point, and bounding box. */ track: { xs: ArrayLike<number>;\n  ys: ArrayLike<number>;\n  n: number;\n  closed: boolean;\n  bounds: { minX: number;\n  maxX: number;\n  minY: number;\n  maxY: number } };\n  /** Size and stroke color via classes, e.g. \"h-20 w-20 text-white/70\". */ className?: string;\n",
+    "SectorChip": "\n  /** Zero-based sector index (rendered as \"Sector index+1\"). */ index: number;\n  /** Sector time in seconds;\n  null = sector not completed (\"—\"). */ time: number | null;\n  /** purple = best overall, green = personal best, yellow = slower, null = neutral grey. */ color: \"purple\" | \"green\" | \"yellow\" | null;\n  /** false = placeholder \"··.···\" (sector not reached yet). Default true. */ shown?: boolean;\n",
+    "Stars": "\n  /** Stars earned, 0–3. */ n: number;\n  /** Tailwind text-size class. Default \"text-lg\". */ size?: string;\n",
+    "Stat": "\n  label: string;\n  /** Pre-formatted value, e.g. \"1:23.456\". */ value: string;\n  /** Paint the value amber (records, highlights). */ accent?: boolean;\n",
+    "WeatherBadge": "\n  /** windToDeg = direction the wind blows towards, degrees counter-clockwise from east. */ conditions: { rain: boolean;\n  windKmh: number;\n  windToDeg: number };\n  /** \"iso\" = isometric race camera, \"map\" = north-up map. Default \"iso\". */ view?: \"iso\" | \"map\";\n",
+    "WindArrow": "\n  /** windToDeg = direction the wind blows towards, degrees counter-clockwise from east. */ conditions: { rain: boolean;\n  windKmh: number;\n  windToDeg: number };\n  view: \"iso\" | \"map\";\n  className?: string;\n"
+  },
+  "docsMap": {
+    "DeltaStat": ".design-sync/docs/timing.md",
+    "SectorChip": ".design-sync/docs/timing.md",
+    "Stat": ".design-sync/docs/timing.md",
+    "Stars": ".design-sync/docs/timing.md",
+    "MiniMap": ".design-sync/docs/track.md",
+    "WeatherBadge": ".design-sync/docs/track.md",
+    "WindArrow": ".design-sync/docs/track.md"
+  },
+  "overrides": {
+    "WeatherBadge": {
+      "cardMode": "column"
+    },
+    "DeltaStat": {
+      "cardMode": "column"
+    },
+    "SectorChip": {
+      "cardMode": "column"
+    },
+    "MiniMap": {
+      "cardMode": "column"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}

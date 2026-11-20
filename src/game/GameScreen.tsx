@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CornerTable } from "../editor/CornerTable";
 import { NodeEditor } from "../editor/NodeEditor";
-import { SetupPanel, WeatherBadge, WindArrow } from "../editor/SetupPanel";
+import { SetupPanel } from "../editor/SetupPanel";
+import { DeltaStat, SectorChip, Stars, Stat, WeatherBadge, WindArrow } from "../ui";
 import { Timeline } from "../editor/Timeline";
 import { RaceAudio } from "../render/audio";
 import { PlaybackController } from "../render/playback";
@@ -40,25 +41,9 @@ interface RunCompare {
   overall: (number | null)[];
 }
 
-const SECTOR_STYLE: Record<SectorColor, string> = {
-  purple: "bg-fuchsia-600 text-white",
-  green: "bg-emerald-500 text-black",
-  yellow: "bg-amber-300 text-black",
-};
-
-function SectorChip({ k, c, shown }: { k: number; c: RunCompare; shown: boolean }) {
+function chipColor(c: RunCompare, k: number): SectorColor | null {
   const t = c.sectors[k];
-  const color = t === null ? null : sectorColor(t, c.personal[k], c.overall[k]);
-  return (
-    <div
-      className={`flex min-w-[92px] flex-col rounded-lg px-2.5 py-1 shadow transition-all duration-300 ${
-        shown && color ? SECTOR_STYLE[color] : shown ? "bg-zinc-700 text-white/70" : "bg-black/50 text-white/30"
-      }`}
-    >
-      <span className="text-[10px] font-semibold uppercase tracking-widest opacity-70">Sector {k + 1}</span>
-      <span className="font-mono text-sm font-semibold tabular-nums">{shown ? (t === null ? "—" : t.toFixed(3)) : "··.···"}</span>
-    </div>
-  );
+  return t === null ? null : sectorColor(t, c.personal[k], c.overall[k]);
 }
 
 const GHOST_LABEL: Record<GhostMode, string> = { best: "Fantasma: mi mejor", record: "Fantasma: récord", off: "Sin fantasma" };
@@ -99,17 +84,6 @@ function LevelGate({ info, session }: { info: RaceTrackInfo | TrainingTrackInfo;
   return <Game info={info} session={session} />;
 }
 
-function Stars({ n, size = "text-lg" }: { n: number; size?: string }) {
-  return (
-    <span className={`${size} tracking-tight`} aria-label={`${n} estrellas`}>
-      {[1, 2, 3].map((k) => (
-        <span key={k} className={k <= n ? "text-amber-300" : "text-white/15"}>
-          ★
-        </span>
-      ))}
-    </span>
-  );
-}
 
 const HINT_STYLE: Record<Hint["tone"], string> = {
   good: "border-emerald-400/40 bg-emerald-400/10 text-emerald-100",
@@ -455,7 +429,7 @@ function Game({ info, session }: { info: RaceTrackInfo | TrainingTrackInfo; sess
             {cmp && (phase === "running" || finishFlash) && (
               <div className="pointer-events-none absolute left-4 top-[92px] flex gap-1.5">
                 {Array.from({ length: SECTOR_COUNT }, (_, k) => (
-                  <SectorChip key={k} k={k} c={cmp} shown={k < revealed} />
+                  <SectorChip key={k} index={k} time={cmp.sectors[k]} color={chipColor(cmp, k)} shown={k < revealed} />
                 ))}
               </div>
             )}
@@ -568,15 +542,15 @@ function Game({ info, session }: { info: RaceTrackInfo | TrainingTrackInfo; sess
                   </div>
                   {info.kind === "race" && current.time !== null && (
                     <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-                      <Compare label="vs. tu mejor" d={prevBest !== null ? current.time - prevBest : null} />
-                      <Compare label="vs. récord" d={current.time - info.recordTime} />
-                      <Compare label="vs. promedio" d={current.time - info.averageTime} />
+                      <DeltaStat label="vs. tu mejor" d={prevBest !== null ? current.time - prevBest : null} />
+                      <DeltaStat label="vs. récord" d={current.time - info.recordTime} />
+                      <DeltaStat label="vs. promedio" d={current.time - info.averageTime} />
                     </div>
                   )}
                   {cmp && (
                     <div className="mt-3 flex gap-1.5">
                       {Array.from({ length: SECTOR_COUNT }, (_, k) => (
-                        <SectorChip key={k} k={k} c={cmp} shown />
+                        <SectorChip key={k} index={k} time={cmp.sectors[k]} color={chipColor(cmp, k)} />
                       ))}
                     </div>
                   )}
@@ -822,20 +796,4 @@ function RoundClassification({ season, round, playerTime }: { season: number; ro
   );
 }
 
-function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
-  return (
-    <div className="flex flex-col items-end leading-tight">
-      <span className="text-[10px] uppercase tracking-wider text-white/45">{label}</span>
-      <span className={`font-mono text-sm tabular-nums ${accent ? "text-amber-300" : "text-white/90"}`}>{value}</span>
-    </div>
-  );
-}
 
-function Compare({ label, d }: { label: string; d: number | null }) {
-  return (
-    <div className="rounded-lg bg-white/5 px-2 py-1.5">
-      <div className="text-white/45">{label}</div>
-      <div className={`font-mono tabular-nums ${d === null ? "text-white/40" : d <= 0 ? "text-emerald-300" : "text-red-300"}`}>{d === null ? "—" : formatDelta(d)}</div>
-    </div>
-  );
-}

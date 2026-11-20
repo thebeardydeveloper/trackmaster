@@ -3,44 +3,10 @@
 import { cornerLimitKmh, topSpeedKmh, WET_GRIP, WINGS } from "../sim/constants";
 import type { Track } from "../sim/track";
 import type { CarSetup, Conditions, WingLevel } from "../sim/types";
+import { WeatherBadge } from "../ui/WeatherBadge";
 
-/**
- * Screen rotation (deg, clockwise from "up") of a wind blowing towards `toDeg`.
- * `iso` = the isometric race view, `map` = top-down minimap (north up).
- */
-export function windScreenDeg(toDeg: number, view: "iso" | "map"): number {
-  const a = (toDeg * Math.PI) / 180;
-  const wx = Math.cos(a);
-  const wy = Math.sin(a);
-  if (view === "map") return 90 - toDeg;
-  // camera looks from (+x, +y, +z): screen right = (1,0,−1)/√2, screen up = (−1,0,−1)/√2 in world;
-  // world z = −track y
-  const sx = (wx + wy) / Math.SQRT2;
-  const sy = (-wx + wy) / Math.SQRT2;
-  return (Math.atan2(sx, sy) * 180) / Math.PI;
-}
-
-export function WindArrow({ conditions, view, className = "" }: { conditions: Conditions; view: "iso" | "map"; className?: string }) {
-  return (
-    <span className={`inline-block leading-none ${className}`} style={{ transform: `rotate(${windScreenDeg(conditions.windToDeg, view)}deg)` }} aria-hidden>
-      ↑
-    </span>
-  );
-}
-
-export function WeatherBadge({ conditions, view = "iso" }: { conditions: Conditions; view?: "iso" | "map" }) {
-  return (
-    <span className="inline-flex items-center gap-2 rounded-md bg-white/10 px-2 py-0.5 text-xs text-white/80">
-      <span>{conditions.rain ? "🌧️ Lluvia" : "☀️ Seco"}</span>
-      {conditions.windKmh > 0 && (
-        <span className="inline-flex items-center gap-1 text-white/65" title="Hacia dónde sopla el viento">
-          <WindArrow conditions={conditions} view={view} className="text-sky-300" />
-          {conditions.windKmh} km/h
-        </span>
-      )}
-    </span>
-  );
-}
+export { WeatherBadge } from "../ui/WeatherBadge";
+export { WindArrow, windScreenDeg } from "../ui/WindArrow";
 
 /** Wind relative to the main straight (where it matters most). */
 function windOnMainStraight(track: Track, c: Conditions): string {

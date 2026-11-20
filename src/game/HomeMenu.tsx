@@ -1,52 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import type { Track } from "../sim/track";
 import { RACE_TRACKS } from "../tracks/race";
 import { TRAINING_LEVELS } from "../tracks/training";
 import { bestAttempt, MAX_ATTEMPTS, useGameStore } from "../store/gameStore";
-import { WeatherBadge } from "../editor/SetupPanel";
+import { MiniMap, Stars, WeatherBadge } from "../ui";
 import { DRY_CALM } from "../sim/types";
 import { getRaceTrack, getTrainingTrack } from "./catalog";
 import { CHAMPIONSHIP_ROUNDS, roundDone, roundKey, standings } from "./championship";
 import { dailyChallenge, dailyHistory, dailyKey, dailyStreak, formatDay, localDateStr } from "./daily";
 import { formatTime } from "./format";
 import { useMounted } from "./useMounted";
-
-function MiniMap({ track, className = "" }: { track: Track; className?: string }) {
-  const { d, view, start } = useMemo(() => {
-    const b = track.bounds;
-    const pad = 40;
-    const pts: string[] = [];
-    for (let i = 0; i < track.n; i += 4) pts.push(`${track.xs[i].toFixed(1)},${(-track.ys[i]).toFixed(1)}`);
-    pts.push(`${track.xs[track.closed ? 0 : track.n - 1].toFixed(1)},${(-track.ys[track.closed ? 0 : track.n - 1]).toFixed(1)}`);
-    const w = b.maxX - b.minX + pad * 2;
-    const h = b.maxY - b.minY + pad * 2;
-    const size = Math.max(w, h);
-    const cx = (b.minX + b.maxX) / 2;
-    const cy = -(b.minY + b.maxY) / 2;
-    return { d: `M${pts.join("L")}${track.closed ? "Z" : ""}`, view: `${cx - size / 2} ${cy - size / 2} ${size} ${size}`, start: [track.xs[0], -track.ys[0]] };
-  }, [track]);
-  return (
-    <svg viewBox={view} className={className} aria-hidden>
-      <path d={d} fill="none" stroke="currentColor" strokeWidth={Math.max(8, (track.bounds.maxX - track.bounds.minX) / 45)} strokeLinejoin="round" strokeLinecap="round" />
-      <circle cx={start[0]} cy={start[1]} r={Math.max(10, (track.bounds.maxX - track.bounds.minX) / 30)} fill="#fbbf24" />
-    </svg>
-  );
-}
-
-function StarRow({ n }: { n: number }) {
-  return (
-    <span className="text-base tracking-tight">
-      {[1, 2, 3].map((k) => (
-        <span key={k} className={k <= n ? "text-amber-300" : "text-white/15"}>
-          ★
-        </span>
-      ))}
-    </span>
-  );
-}
 
 export function TrainingSection() {
   const mounted = useMounted();
@@ -73,7 +37,7 @@ export function TrainingSection() {
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs text-white/45">NIVEL {l.number}</span>
-                {unlocked ? <StarRow n={p?.stars ?? 0} /> : <span className="text-sm">🔒</span>}
+                {unlocked ? <Stars n={p?.stars ?? 0} size="text-base" /> : <span className="text-sm">🔒</span>}
               </div>
               <MiniMap track={info.track} className="h-20 w-full text-white/70 transition group-hover:text-white" />
               <div>
